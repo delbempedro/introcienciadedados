@@ -1,0 +1,125 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+
+\geometry{
+    a4paper,
+    left=2.5cm,
+    right=2.5cm,
+    top=2.5cm,
+    bottom=2.5cm
+}
+
+\title{Respostas - Questionário do Projeto Final \\ \large Introdução à Ciência de Dados}
+\author{
+    \textbf{Integrantes do Grupo:} \\
+    Leonardo de Faria Sales - $N_{USP}$: 11815973 \\
+    Nathan Mayer Hunhoff - $N_{USP}$: 13686664 \\
+    Pedro Calligaris Delbem - $N_{USP}$: 5255417 \\
+}
+\date{Prof. Francisco Rodrigues \\ \today}
+
+\begin{document}
+
+    \maketitle
+    \thispagestyle{empty}
+    \newpage
+
+    \section*{1 - Descreva o tema do projeto}
+    \label{sec:tema}
+    Este projeto investiga a correlação entre a cobertura vacinal infantil e as taxas de mortalidade nos Estados Unidos. Adicionalmente, o estudo busca contextualizar essa relação frente ao fenômeno do movimento antivacina no país.
+
+    \section*{2 - Descreva a base de dados que será usada}
+    \label{sec:dados}
+    Utilizaremos a base de dados do governo dos Estados Unidos, que abrange a cobertura vacinal infantil no país para as vacinas HEPB3, POL3, HIB3, MCV1 e DTP3, bem como a base de dados da UNICEF que registra as taxas de mortalidade infantil para o mesmo período de 2002 a 2022.
+
+    \section*{3 - Quais os passos serão adotados na análise dos dados}
+    \label{sec:passos}
+    O fluxo de trabalho adotado está detalhado no fluxograma da Figura~\ref{fig:fluxograma_ramos}, na página seguinte.
+
+    % --- Início do CÓDIGO FINAL com RAMOS (Correlação + Predição) ---
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[node distance=2.6cm, auto]
+            % --- Estilos dos Blocos ---
+            \tikzstyle{bloco} = [rectangle, rounded corners, minimum height=1.3cm, text centered, text width=5cm, draw=black, fill=blue!20]
+            \tikzstyle{prep} = [rectangle, rounded corners, minimum height=1.3cm, text centered, text width=5cm, draw=black, fill=yellow!30]
+            \tikzstyle{analise} = [rectangle, rounded corners, minimum height=1.3cm, text centered, text width=4cm, draw=black, fill=orange!30]
+            \tikzstyle{model} = [rectangle, rounded corners, minimum height=1.3cm, text centered, text width=4cm, draw=black, fill=green!20]
+            \tikzstyle{arrow} = [thick,->,>=stealth]
+
+            % --- Tronco Comum ---
+            \node (inicio) [bloco] {1. Carga e Estruturação \\ dos Dados da UNICEF};
+            \node (prep) [prep, below of=inicio] {2. Preparação dos Dados: \\ Filtro (EUA), Tratamento de Ausentes e Engenharia de Features};
+            \node (aed) [prep, below of=prep] {3. Análise Exploratória: \\ Visualização de tendências e distribuições};
+
+            % --- Divisão para os Ramos ---
+            
+            % --- Ramo da Correlação (Esquerda) ---
+            \node (corr) [analise, below left of=aed, xshift=-1.5cm, yshift=-1cm] {4a. Análise de Correlação \\ (Gráficos de Dispersão e Coeficiente de Pearson)};
+            
+            % --- Ramo da Predição (Direita) ---
+            \node (split) [model, below right of=aed, xshift=1.5cm, yshift=-1cm] {4b. Preparação para Modelagem \\ (Divisão em Treino e Teste)};
+            \node (treino) [model, below of=split] {5b. Treinamento do Modelo \\ de Regressão};
+            \node (aval) [model, below of=treino] {6b. Avaliação do Modelo \\ (Métricas como $R^2$ e RMSE)};
+
+            % --- União para a Conclusão ---
+            \node (fim) [bloco, below of=aval, yshift=-1.5cm, xshift=-2.5cm] {7. Conclusão Geral: \\ Interpretação da Correlação e da Performance Preditiva do Modelo};
+
+            % --- Conexões com Setas ---
+            \draw [arrow] (inicio) -- (prep);
+            \draw [arrow] (prep) -- (aed);
+            
+            % Setas para os ramos
+            \draw [arrow] (aed) -- (corr);
+            \draw [arrow] (aed) -- (split);
+            
+            % Setas do ramo da predição
+            \draw [arrow] (split) -- (treino);
+            \draw [arrow] (treino) -- (aval);
+            
+            % Setas unindo os ramos na conclusão
+            \draw [arrow] (corr) -- (fim);
+            \draw [arrow] (aval) -- (fim);
+            
+        \end{tikzpicture}
+        \caption{Fluxograma do projeto com ramos de Análise de Correlação e Modelagem Preditiva.}
+        \label{fig:fluxograma_ramos}
+    \end{figure}
+    % --- Fim do CÓDIGO FINAL com RAMOS ---
+
+    \section*{4 - Quais os desafios esperados?}
+    \label{sec:desafios}
+
+    Durante o desenvolvimento do projeto, esperamos encontrar os seguintes desafios:
+    \begin{itemize}
+        \item \textbf{Irregularidade dos Dados:} A base de dados da UNICEF, embora confiável, apresenta dados para crianças de 0-23 meses durante o período de 2012 a 2014, enquanto para os demais períodos os dados se referem a crianças de 0-35 meses.
+
+        \item \textbf{Complexidade da Causalidade:} O maior desafio conceitual será o de discutir a correlação sem afirmar causalidade. A mortalidade infantil é um fenômeno multifatorial, influenciado por saneamento, acesso à saúde, fatores socioeconômicos, etc. Isolar o impacto da vacinação e discutir a máxima ``correlação não implica causalidade'' de forma rigorosa será um ponto crítico do trabalho.
+
+        \item \textbf{Definição de ''Movimento Antivacina'':} Quantificar a força do ''movimento antivacina'' é complexo. Como não temos uma variável direta para isso no dataset, teremos que tratar a cobertura vacinal como uma \textit{proxy} indireta, um desafio que exige uma interpretação cuidadosa e a menção dessa limitação nos resultados.
+    \end{itemize}
+
+    \section*{5 - Quais os resultados esperados?}
+    \label{sec:resultados}
+
+    Com a conclusão deste projeto, esperamos obter os seguintes resultados:
+    \begin{itemize}
+        \item \textbf{Análise Correlacional Quantitativa:} Esperamos encontrar e quantificar uma correlação negativa estatisticamente significativa entre a cobertura das principais vacinas (como DTP3 e MCV1) e a taxa de mortalidade infantil nos EUA para o período analisado. O resultado principal será o valor do coeficiente de Pearson acompanhado de gráficos de dispersão.
+
+        \item \textbf{Modelo Preditivo Funcional:} Almejamos construir um modelo de regressão linear capaz de predizer a taxa de mortalidade infantil com base na cobertura vacinal. O resultado esperado é um modelo validado, com métricas de performance (como $R^2$ e RMSE) que demonstrem sua capacidade preditiva e suas limitações.
+
+        \item \textbf{Visualizações Claras e Informativas:} Produzir uma série de gráficos (séries temporais, gráficos de dispersão) que não apenas suportem nossas conclusões, mas também comuniquem de forma clara a evolução das variáveis e a relação entre elas ao longo das duas décadas analisadas.
+    \end{itemize}
+
+    \section*{6 - Por que vocês escolheram esse tema?}
+    \label{sec:motivacao}
+    A escolha deste tema foi motivada pela crescente relevância do debate sobre vacinação na saúde pública global. Nos últimos anos, observamos um aumento da hesitação vacinal e a disseminação de desinformação, fenômenos que coincidem com o ressurgimento de doenças antes controladas. O projeto nos permite aplicar as ferramentas de Ciência de Dados para investigar, com base em evidências, um problema real e de alto impacto social. A oportunidade de analisar dados concretos da UNICEF para explorar a relação entre a cobertura vacinal e um indicador tão crítico quanto a mortalidade infantil nos pareceu uma aplicação prática e significativa dos conceitos aprendidos na disciplina.
+
+\end{document}
